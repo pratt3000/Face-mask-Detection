@@ -51,12 +51,15 @@ labels = []
 # loop over the image paths
 for imagePath in imagePaths:
 	# extract the class label from the filename
-    label = imagePath.split(os.path.sep)[-1]	#	folder name withmask/withoutmask
+    #-1 for file name
+    #-2 for its folder and proceed so on
+    label = imagePath.split(os.path.sep)[-2]	#	folder name withmask/withoutmask
     print(label)
+
     # load the input image (224x224) and preprocess it
     image = load_img(imagePath, target_size=(224, 224))
     image = img_to_array(image)
-    image = preprocess_input(image)
+    image = preprocess_input(image)         # corrects size to [noofImages, w, h, 1]
 
     # update the data and labels lists, respectively
     data.append(image)

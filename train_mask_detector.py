@@ -36,22 +36,22 @@ ap.add_argument("-m", "--model", type=str,
 args = vars(ap.parse_args())
 
 # initialize the initial learning rate, number of epochs to train for,
-# and batch size
-INIT_LR = 1e-4
-EPOCHS = 8
-BS = 32
+
+INIT_LR = 1e-4 	# reduce when iterations increase
+EPOCHS = 8		#iters...ations
+BS = 32			# batch size
 
 # grab the list of images in our dataset directory, then initialize
 # the list of data (i.e., images) and class images
-print("[INFO] loading images...")
-imagePaths = list(paths.list_images(args["dataset"]))
+print("****** loading images ******")
+imagePaths = list(paths.list_images(args["dataset"]))	# addresses
 data = []
 labels = []
 
 # loop over the image paths
 for imagePath in imagePaths:
 	# extract the class label from the filename
-	label = imagePath.split(os.path.sep)[-2]
+	label = imagePath.split(os.path.sep)[-2]	#	folder name withmask/withoutmask
 
 	# load the input image (224x224) and preprocess it
 	image = load_img(imagePath, target_size=(224, 224))
@@ -71,12 +71,10 @@ lb = LabelBinarizer()
 labels = lb.fit_transform(labels)
 labels = to_categorical(labels)
 
-# partition the data into training and testing splits using 75% of
-# the data for training and the remaining 25% for testing
-(trainX, testX, trainY, testY) = train_test_split(data, labels,
-	test_size=0.20, stratify=labels, random_state=42)
+# partition the data
+(trainX, testX, trainY, testY) = train_test_split(data, labels, test_size=0.20, stratify=labels, random_state=42)
 
-# construct the training image generator for data augmentation
+#data augmentation
 aug = ImageDataGenerator(
 	rotation_range=20,
 	zoom_range=0.15,
@@ -86,8 +84,9 @@ aug = ImageDataGenerator(
 	horizontal_flip=True,
 	fill_mode="nearest")
 
-# load the MobileNetV2 network, ensuring the head FC layer sets are
-# left off
+# load the MobileNetV2 network, ensuring the head FC layer sets are left off
+# like yolo can classify differrent things into bounding boxes
+#used to single out the human faces
 baseModel = MobileNetV2(weights="imagenet", include_top=False,
 	input_tensor=Input(shape=(224, 224, 3)))
 
@@ -112,8 +111,7 @@ for layer in baseModel.layers:
 # compile our model
 print("[INFO] compiling model...")
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
-model.compile(loss="binary_crossentropy", optimizer=opt,
-	metrics=["accuracy"])
+model.compile(loss="binary_crossentropy", optimizer=opt, metrics=["accuracy"])
 
 # train the head of the network
 print("[INFO] training head...")
