@@ -1,5 +1,4 @@
 # Face-mask-Detection
-detect face mask 
 
 DECTECT PEOPLE WHO ARE AND ARENT WEARING FACE MASKS IN A VIDEO STREAM
 
